@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'management',
     'restaurant',
     'frontdesk',
+    'rest_framework'
 ]
 
 MIDDLEWARE = [

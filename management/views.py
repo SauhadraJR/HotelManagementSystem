@@ -6,6 +6,8 @@ from .models import RoomType, Room, User
 from .serializers import RoomTypeSerializer, RoomSerializer, UserSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
+from rest_framework.permissions import AllowAny
 
 # Create your views here.
 class RoomTypeView(ModelViewSet):
@@ -69,11 +71,15 @@ class RoomEditView(GenericAPIView):
 class UserView(ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [AllowAny]
 
     def register(self,request):
+
         serializer = UserSerializer(data = request.data)
         if serializer.is_valid():
-            serializer.save()
+            password = request.data.get('password')
+            hash_password = make_password(password)
+            serializer.save(password = hash_password)
             return Response("User Created!")
         else:
             return Response(serializer.errors)
@@ -88,4 +94,4 @@ class UserView(ModelViewSet):
             return Response("Invalid Credentials!!")
         else:
             token,_ = Token.objects.get_or_create(user=user)
-            return Response(token)
+            return Response(token.key)

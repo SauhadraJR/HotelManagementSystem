@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'management',
     'restaurant',
     'frontdesk',
-    'rest_framework'
+    'rest_framework',
+    'rest_framework.authtoken',
 ]
 
 MIDDLEWARE = [

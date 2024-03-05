@@ -1,9 +1,11 @@
 from django.shortcuts import render
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
-from .models import RoomType, Room
-from .serializers import RoomTypeSerializer, RoomSerializer
+from rest_framework.authtoken.models import Token
+from .models import RoomType, Room, User
+from .serializers import RoomTypeSerializer, RoomSerializer, UserSerializer
 from rest_framework.response import Response
+from django.contrib.auth import authenticate
 
 # Create your views here.
 class RoomTypeView(ModelViewSet):
@@ -63,3 +65,27 @@ class RoomEditView(GenericAPIView):
             return Response("Data not found!")
         room_obj.delete()
         return Response("Data deleted")
+
+class UserView(ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+    def register(self,request):
+        serializer = UserSerializer(data = request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response("User Created!")
+        else:
+            return Response(serializer.errors)
+    
+    def login(self,request):
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        user = authenticate(username = email, password = password)
+
+        if user == None: 
+            return Response("Invalid Credentials!!")
+        else:
+            token,_ = Token.objects.get_or_create(user=user)
+            return Response(token)

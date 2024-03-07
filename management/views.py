@@ -3,11 +3,12 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.generics import GenericAPIView
 from rest_framework.authtoken.models import Token
 from .models import RoomType, Room, User
-from .serializers import RoomTypeSerializer, RoomSerializer, UserSerializer
+from .serializers import RoomTypeSerializer, RoomSerializer, UserSerializer, GroupSerializer
 from rest_framework.response import Response
 from django.contrib.auth import authenticate
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import AllowAny
+from django.contrib.auth.models import Group
 
 # Create your views here.
 class RoomTypeView(ModelViewSet):
@@ -17,6 +18,11 @@ class RoomTypeView(ModelViewSet):
 # class RoomView(ModelViewSet):
 #     queryset = Room.objects.all()
 #     serializer_class = RoomSerializer
+
+class GroupView(ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [AllowAny]
     
 
 class RoomView(GenericAPIView):
